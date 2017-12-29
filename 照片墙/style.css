@@ -1,0 +1,32 @@
+body {
+	/* background: black; */
+}
+.clearfix:after{
+	content: '';
+	display: block;
+	clear: both;
+}
+#imgWrap {
+	width: 732px;
+	height: 410px;
+	margin: 50px auto;
+	perspective: 800px;
+}
+#imgWrap img {
+	float: left;
+	width: 120px;
+	height: 80px;
+	margin: 1px;
+}
+#btn {
+	width: 100px;
+	text-align: center;
+	cursor: pointer;
+	font: 16px/40px "微软雅黑";
+	color: #fff;
+	background: rgb(0, 100, 0);
+	border-radius: 5px;
+	padding: 0px 15px;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+	margin: 0 auto;
+}
