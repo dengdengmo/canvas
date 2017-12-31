@@ -12,9 +12,9 @@ window.onload=function(){
             if(clicked){
                 n = n * 15;
             }else{
-                n = 360;
+                n = 0;
             }
-            lis[i].style.transform = 'rotate(' + n + 'deg)';   
+            lis[i].style.transform = 'rotate(' + n + 'deg)';
         }
         clicked = !clicked;
     })
@@ -53,7 +53,7 @@ window.onload=function(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight + 500;
     var context = canvas.getContext('2d');
-    var colors = ['#69D2E7','#A7DBD8','#E0E4CC','#F38630','#FA6900','#FF4E50','#F9D423'];
+    var colors = ['#69D2E7','#A7DBD8','#99FF0A','#E0E4CC','#F38630','#FA6900','#FF4E50','#F9D423'];
     var balls = [];
     var timer;
 
@@ -80,6 +80,7 @@ window.onload=function(){
          // arc(x轴位置，y轴位置，半径，起始弧度，结束弧度)
          context.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
          context.fillStyle = ball.color; // 给圆填充颜色
+         context.globalcompositeOperation = 'lighter';
          context.fill();
      }
 
@@ -87,15 +88,15 @@ window.onload=function(){
      function random(min, max){
          return Math.round(Math.random()*(max-min)+min);
      }
-
+     var on = true;
      canvas.addEventListener('mousemove', function(ev){
          for(var i=0; i<2; i++){
              var ball = {
                  x: random(-3,3) + ev.clientX,
                  y: random(-3,3) + ev.clientY+ window.pageYOffset,
-                 r: random(2,15),
-                 vx: Math.random()-0.5,
-                 vy: Math.random()-0.5,
+                 r: random(3,20),
+                 vx: Math.random()-0.8,
+                 vy: Math.random()-0.8,
                  color: colors[random(0,colors.length-1)]
              }
              balls.push(ball);
@@ -103,16 +104,35 @@ window.onload=function(){
                  balls.shift();
              }
          }
-         drallBall();
+         if(on){
+             clearInterval(timer);
+             timer = setInterval(drallBall, 30);
+             on = false;
+         }
+         
+         
          function drallBall(){
              context.clearRect(0,0,canvas.width,canvas.height);
 
              for(var i=0; i<balls.length; i++){
                  // 需要在画的时候把球的位置还有半径都改了，这样的话看上去球才会动
-                 balls[i].x+=balls[i].vx*5;  // 通过速度改变x轴的位置
-                 balls[i].y+=balls[i].vy*5;
-                 balls[i].r=balls[i].r*0.93;    // 改变球的半径
-                 draw(balls[i])
+                 balls[i].x+=balls[i].vx*2;  // 通过速度改变x轴的位置
+                 balls[i].y+=balls[i].vy*4;
+                 balls[i].r=balls[i].r*0.92;    // 改变球的半径
+
+                 balls[i].index = i;  // 为了找到目标ball
+
+                 if(balls[i].r<1){
+                     balls.splice(balls[i].index, 1);
+                     continue; // 如果小球被删除 下面的代码不会再执行, 总结continue的用法
+                 }
+                 draw(balls[i]);
+
+                 // 如果balls数组里没有东西了，清除定时器
+                 if(!balls.length){
+                     clearInterval(timer);
+                     on = true;     // 让on的值与定时器保持一致
+                 }
              }
          }
      })
